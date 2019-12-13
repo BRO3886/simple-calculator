@@ -76,11 +76,17 @@ class BottomTable extends StatelessWidget {
           child: Table(children: [
             TableRow(children: [
               CalcButtons(
-                  buttonText: '+', color: Theme.of(context).primaryColor),
+                  buttonText: '+',
+                  color: Theme.of(context).primaryColor,
+                  textColor: Theme.of(context).accentColor),
               CalcButtons(
-                  buttonText: '-', color: Theme.of(context).primaryColor),
+                  buttonText: '-',
+                  color: Theme.of(context).primaryColor,
+                  textColor: Theme.of(context).accentColor),
               CalcButtons(
-                  buttonText: '×', color: Theme.of(context).primaryColor),
+                  buttonText: '×',
+                  color: Theme.of(context).primaryColor,
+                  textColor: Theme.of(context).accentColor),
             ]),
             TableRow(children: [
               CalcButtons(
@@ -122,11 +128,13 @@ class BottomTable extends StatelessWidget {
             children: [
               TableRow(children: [
                 CalcButtons(
-                    buttonText: '÷', color: Theme.of(context).primaryColor),
+                    buttonText: '÷',
+                    color: Theme.of(context).primaryColor,
+                    textColor: Theme.of(context).accentColor),
               ]),
               TableRow(children: [
                 CalcButtons(
-                    buttonText: 'AC', color: Theme.of(context).primaryColor),
+                    buttonText: 'AC', color: Theme.of(context).primaryColor, textColor: Theme.of(context).errorColor),
               ]),
               TableRow(children: [
                 CalcButtons(

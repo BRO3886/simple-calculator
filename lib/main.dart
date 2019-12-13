@@ -48,8 +48,7 @@ class _SimpleCalculatorState extends State<SimpleCalculator> {
           result = '${expr.evaluate(EvaluationType.REAL, ContextModel())}';
           //result = expression;
           expression = '0';
-        }
-        if (expression == '0') {
+        } else if (expression == '0') {
           expression = exp;
         } else if (exp == '( )') {
           if (bracket) {

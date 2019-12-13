@@ -9,9 +9,11 @@ class Output extends StatelessWidget {
     return Container(
       alignment: Alignment.centerRight,
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      child: Text(
-        (result == null) ? '0' : result,
-        style: TextStyle(fontSize: fontSize, color: Colors.white),
+      child: FittedBox(
+              child: SelectableText(
+          (result == null) ? '0' : result,
+          style: TextStyle(fontSize: fontSize, color: Colors.white),
+        ),
       ),
     );
   }

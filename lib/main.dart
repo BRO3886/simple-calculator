@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:math_expressions/math_expressions.dart';
+import 'dart:math' as math;
+import './output.dart';
 
 void main() => runApp(CalculatorApp());
 
@@ -7,7 +10,7 @@ class CalculatorApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Calculator',
+      title: 'DSC Calculator',
       theme: ThemeData.dark(),
       home: Scaffold(
         appBar: AppBar(
@@ -26,168 +29,169 @@ class SimpleCalculator extends StatefulWidget {
 }
 
 class _SimpleCalculatorState extends State<SimpleCalculator> {
+  String expression = '0';
+  String result = '0';
+  bool bracket = true;
+  void _performCalculation(String exp) {
+    setState(() {
+      Parser p = Parser();
+      if (exp == 'AC') {
+        expression = '0';
+        result = '0';
+      } else if (exp == 'C') {
+        expression = expression.substring(0, expression.length - 1);
+      } else {
+        if (exp == '=') {
+          expression = expression.replaceAll('×', '*');
+          expression = expression.replaceAll('÷', '/');
+          Expression expr = p.parse(expression);
+          result = '${expr.evaluate(EvaluationType.REAL, ContextModel())}';
+          //result = expression;
+          expression = '0';
+        }
+        if (expression == '0') {
+          expression = exp;
+        } else if (exp == '( )') {
+          if (bracket) {
+            expression += '(';
+            bracket = false;
+          } else {
+            expression += ')';
+            bracket = true;
+          }
+        } else {
+          expression += exp;
+        }
+      }
+    });
+  }
+
+  Widget calcButtons(
+      {@required String buttonText, @required Color color, Color textColor}) {
+    return Container(
+        height: MediaQuery.of(context).size.height * 0.1,
+        child: MaterialButton(
+          elevation: 0,
+          color: color,
+          child: Text(buttonText,
+              style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.w400,
+                  color: (textColor == null) ? Colors.white : textColor)),
+          onPressed: () => _performCalculation(buttonText),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Theme.of(context).primaryColor,
-      //padding: const EdgeInsets.all(6),
       child: Column(
         children: <Widget>[
           SizedBox(
             height: 20,
           ),
-          Output(Theme.of(context).textTheme.display1),
+          Output(fontSize: 30, result: expression),
           SizedBox(
             height: 5,
           ),
-          Output(Theme.of(context).textTheme.display3),
+          Output(
+            fontSize: 60,
+            result: result,
+          ),
           Expanded(child: Divider()),
-          BottomTable(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Container(
+                width: MediaQuery.of(context).size.width * 0.80,
+                child: Table(children: [
+                  TableRow(children: [
+                    calcButtons(
+                        buttonText: '+',
+                        color: Theme.of(context).primaryColor,
+                        textColor: Theme.of(context).accentColor),
+                    calcButtons(
+                        buttonText: '-',
+                        color: Theme.of(context).primaryColor,
+                        textColor: Theme.of(context).accentColor),
+                    calcButtons(
+                        buttonText: '×',
+                        color: Theme.of(context).primaryColor,
+                        textColor: Theme.of(context).accentColor),
+                  ]),
+                  TableRow(children: [
+                    calcButtons(
+                        buttonText: '7', color: Theme.of(context).primaryColor),
+                    calcButtons(
+                        buttonText: '8', color: Theme.of(context).primaryColor),
+                    calcButtons(
+                        buttonText: '9', color: Theme.of(context).primaryColor),
+                  ]),
+                  TableRow(children: [
+                    calcButtons(
+                        buttonText: '4', color: Theme.of(context).primaryColor),
+                    calcButtons(
+                        buttonText: '5', color: Theme.of(context).primaryColor),
+                    calcButtons(
+                        buttonText: '6', color: Theme.of(context).primaryColor),
+                  ]),
+                  TableRow(children: [
+                    calcButtons(
+                        buttonText: '1', color: Theme.of(context).primaryColor),
+                    calcButtons(
+                        buttonText: '2', color: Theme.of(context).primaryColor),
+                    calcButtons(
+                        buttonText: '3', color: Theme.of(context).primaryColor),
+                  ]),
+                  TableRow(children: [
+                    calcButtons(
+                        buttonText: '.', color: Theme.of(context).primaryColor),
+                    calcButtons(
+                        buttonText: '0', color: Theme.of(context).primaryColor),
+                    calcButtons(
+                        buttonText: '( )',
+                        color: Theme.of(context).primaryColor),
+                  ]),
+                ]),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.20,
+                child: Table(
+                  children: [
+                    TableRow(children: [
+                      calcButtons(
+                          buttonText: '÷',
+                          color: Theme.of(context).primaryColor,
+                          textColor: Theme.of(context).accentColor),
+                    ]),
+                    TableRow(children: [
+                      calcButtons(
+                          buttonText: 'AC',
+                          color: Theme.of(context).primaryColor,
+                          textColor: Theme.of(context).errorColor),
+                    ]),
+                    TableRow(children: [
+                      calcButtons(
+                          buttonText: 'C',
+                          color: Theme.of(context).primaryColor),
+                    ]),
+                    TableRow(children: [
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.2,
+                        child: calcButtons(
+                            buttonText: '=',
+                            color: Theme.of(context).accentColor,
+                            textColor: Colors.grey[900]),
+                      )
+                    ]),
+                  ],
+                ),
+              ),
+            ],
+          )
         ],
       ),
     );
-  }
-}
-
-class Output extends StatelessWidget {
-  final TextStyle textStyle;
-  Output(this.textStyle);
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.centerRight,
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      child: Text(
-        '0',
-        style: textStyle,
-      ),
-    );
-  }
-}
-
-class BottomTable extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Container(
-          width: MediaQuery.of(context).size.width * 0.80,
-          child: Table(children: [
-            TableRow(children: [
-              CalcButtons(
-                  buttonText: '+',
-                  color: Theme.of(context).primaryColor,
-                  textColor: Theme.of(context).accentColor),
-              CalcButtons(
-                  buttonText: '-',
-                  color: Theme.of(context).primaryColor,
-                  textColor: Theme.of(context).accentColor),
-              CalcButtons(
-                  buttonText: '×',
-                  color: Theme.of(context).primaryColor,
-                  textColor: Theme.of(context).accentColor),
-            ]),
-            TableRow(children: [
-              CalcButtons(
-                  buttonText: '7', color: Theme.of(context).primaryColor),
-              CalcButtons(
-                  buttonText: '8', color: Theme.of(context).primaryColor),
-              CalcButtons(
-                  buttonText: '9', color: Theme.of(context).primaryColor),
-            ]),
-            TableRow(children: [
-              CalcButtons(
-                  buttonText: '4', color: Theme.of(context).primaryColor),
-              CalcButtons(
-                  buttonText: '5', color: Theme.of(context).primaryColor),
-              CalcButtons(
-                  buttonText: '6', color: Theme.of(context).primaryColor),
-            ]),
-            TableRow(children: [
-              CalcButtons(
-                  buttonText: '1', color: Theme.of(context).primaryColor),
-              CalcButtons(
-                  buttonText: '2', color: Theme.of(context).primaryColor),
-              CalcButtons(
-                  buttonText: '3', color: Theme.of(context).primaryColor),
-            ]),
-            TableRow(children: [
-              CalcButtons(
-                  buttonText: '.', color: Theme.of(context).primaryColor),
-              CalcButtons(
-                  buttonText: '0', color: Theme.of(context).primaryColor),
-              CalcButtons(
-                  buttonText: '( )', color: Theme.of(context).primaryColor),
-            ]),
-          ]),
-        ),
-        Container(
-          width: MediaQuery.of(context).size.width * 0.20,
-          child: Table(
-            children: [
-              TableRow(children: [
-                CalcButtons(
-                    buttonText: '÷',
-                    color: Theme.of(context).primaryColor,
-                    textColor: Theme.of(context).accentColor),
-              ]),
-              TableRow(children: [
-                CalcButtons(
-                    buttonText: 'AC', color: Theme.of(context).primaryColor, textColor: Theme.of(context).errorColor),
-              ]),
-              TableRow(children: [
-                CalcButtons(
-                    buttonText: 'C', color: Theme.of(context).primaryColor),
-              ]),
-              TableRow(children: [
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.2,
-                  child: CalcButtons(
-                      buttonText: '=',
-                      color: Theme.of(context).accentColor,
-                      textColor: Colors.grey[900]),
-                )
-              ]),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class CalcButtons extends StatefulWidget {
-  final String buttonText;
-  final Color color;
-  final Color textColor;
-  CalcButtons(
-      {@required this.buttonText, @required this.color, this.textColor});
-
-  @override
-  _CalcButtonsState createState() => _CalcButtonsState();
-}
-
-class _CalcButtonsState extends State<CalcButtons> {
-  void _performCalculation() {
-    setState(() {});
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        height: MediaQuery.of(context).size.height * 0.1,
-        child: MaterialButton(
-          elevation: 0,
-          color: widget.color,
-          child: Text(widget.buttonText,
-              style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w300,
-                  color: (widget.textColor == null)
-                      ? Colors.white
-                      : widget.textColor)),
-          onPressed: _performCalculation,
-        ));
   }
 }

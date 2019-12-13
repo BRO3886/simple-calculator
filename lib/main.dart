@@ -44,10 +44,13 @@ class _SimpleCalculatorState extends State<SimpleCalculator> {
         if (exp == '=') {
           expression = expression.replaceAll('×', '*');
           expression = expression.replaceAll('÷', '/');
+          expression = expression.replaceAll('Π', '${math.pi}');
           try {
             Expression expr = p.parse(expression);
             result = '${expr.evaluate(EvaluationType.REAL, ContextModel())}';
-          } catch (err) {print(err);}
+          } catch (err) {
+            print(err);
+          }
           //result = expression;
           expression = '0';
         } else if (expression == '0') {
@@ -89,6 +92,10 @@ class _SimpleCalculatorState extends State<SimpleCalculator> {
       color: Theme.of(context).primaryColor,
       child: Column(
         children: <Widget>[
+          Container(
+            padding: EdgeInsets.all(8),
+            alignment: Alignment.centerLeft,
+            child: Text('RAD', textAlign: TextAlign.right)),
           SizedBox(
             height: 20,
           ),
@@ -105,8 +112,22 @@ class _SimpleCalculatorState extends State<SimpleCalculator> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Container(
-                width: MediaQuery.of(context).size.width * 0.80,
+                width: MediaQuery.of(context).size.width * 0.75,
                 child: Table(children: [
+                  TableRow(children: [
+                    calcButtons(
+                        buttonText: 'sin',
+                        color: Theme.of(context).primaryColor,
+                        textColor: Theme.of(context).accentColor),
+                    calcButtons(
+                        buttonText: 'cos',
+                        color: Theme.of(context).primaryColor,
+                        textColor: Theme.of(context).accentColor),
+                    calcButtons(
+                        buttonText: 'tan',
+                        color: Theme.of(context).primaryColor,
+                        textColor: Theme.of(context).accentColor),
+                  ]),
                   TableRow(children: [
                     calcButtons(
                         buttonText: '+',
@@ -157,9 +178,15 @@ class _SimpleCalculatorState extends State<SimpleCalculator> {
                 ]),
               ),
               Container(
-                width: MediaQuery.of(context).size.width * 0.20,
+                width: MediaQuery.of(context).size.width * 0.25,
                 child: Table(
                   children: [
+                    TableRow(children: [
+                      calcButtons(
+                          buttonText: 'Π',
+                          color: Theme.of(context).primaryColor,
+                          textColor: Theme.of(context).accentColor),
+                    ]),
                     TableRow(children: [
                       calcButtons(
                           buttonText: '÷',

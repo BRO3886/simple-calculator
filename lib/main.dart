@@ -44,8 +44,10 @@ class _SimpleCalculatorState extends State<SimpleCalculator> {
         if (exp == '=') {
           expression = expression.replaceAll('×', '*');
           expression = expression.replaceAll('÷', '/');
-          Expression expr = p.parse(expression);
-          result = '${expr.evaluate(EvaluationType.REAL, ContextModel())}';
+          try {
+            Expression expr = p.parse(expression);
+            result = '${expr.evaluate(EvaluationType.REAL, ContextModel())}';
+          } catch (err) {print(err);}
           //result = expression;
           expression = '0';
         } else if (expression == '0') {
